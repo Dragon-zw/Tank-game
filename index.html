@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克大战 - Tank Battle</title>
+    <meta name="description" content="经典坦克大战游戏，使用HTML5 Canvas打造的精美网页游戏">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-container">
+        <!-- 游戏标题 -->
+        <header class="game-header">
+            <h1 class="game-title">
+                <span class="title-icon">🎮</span>
+                坦克大战
+                <span class="title-icon">💥</span>
+            </h1>
+        </header>
+
+        <!-- 游戏主体 -->
+        <main class="game-main">
+            <!-- Canvas 画布 -->
+            <div class="canvas-wrapper">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+                <!-- 游戏覆盖层 -->
+                <div id="gameOverlay" class="game-overlay">
+                    <div class="overlay-content">
+                        <h2 class="overlay-title">坦克大战</h2>
+                        <p class="overlay-subtitle">保护你的基地,消灭所有敌人！</p>
+
+                        <!-- 难度选择 -->
+                        <div class="difficulty-selector">
+                            <h3 class="difficulty-title">选择难度</h3>
+                            <div class="difficulty-options">
+                                <button class="difficulty-btn" data-difficulty="easy">
+                                    <span class="difficulty-icon">😊</span>
+                                    <span class="difficulty-name">简单</span>
+                                    <span class="difficulty-desc">敌人少，速度慢</span>
+                                </button>
+                                <button class="difficulty-btn active" data-difficulty="normal">
+                                    <span class="difficulty-icon">😐</span>
+                                    <span class="difficulty-name">普通</span>
+                                    <span class="difficulty-desc">标准难度</span>
+                                </button>
+                                <button class="difficulty-btn" data-difficulty="hard">
+                                    <span class="difficulty-icon">😤</span>
+                                    <span class="difficulty-name">困难</span>
+                                    <span class="difficulty-desc">敌人多，速度快</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overlay-controls">
+                            <div class="control-item">
+                                <span class="control-key">WASD / ↑↓←→</span>
+                                <span class="control-desc">移动</span>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-key">空格</span>
+                                <span class="control-desc">射击</span>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-key">P</span>
+                                <span class="control-desc">暂停</span>
+                            </div>
+                        </div>
+                        <button id="startButton" class="btn btn-primary">开始游戏</button>
+                    </div>
+                </div>
+
+                <!-- 游戏结束覆盖层 -->
+                <div id="gameOverOverlay" class="game-overlay hidden">
+                    <div class="overlay-content">
+                        <h2 id="gameOverTitle" class="overlay-title">游戏结束</h2>
+                        <div class="game-over-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">最终分数</span>
+                                <span id="finalScore" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">关卡</span>
+                                <span id="finalLevel" class="stat-value">1</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">消灭敌人</span>
+                                <span id="finalKills" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button id="restartButton" class="btn btn-primary">重新开始</button>
+                            <button id="mainMenuButton" class="btn btn-secondary">返回主菜单</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏信息面板 -->
+            <aside class="game-info">
+                <div class="info-panel">
+                    <h3 class="panel-title">游戏状态</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">分数</span>
+                            <span id="score" class="info-value">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">关卡</span>
+                            <span id="level" class="info-value">1</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">生命</span>
+                            <span id="lives" class="info-value">❤️❤️❤️</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">敌人</span>
+                            <span id="enemies" class="info-value">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h3 class="panel-title">游戏说明</h3>
+                    <ul class="info-list">
+                        <li>🎯 消灭所有敌方坦克</li>
+                        <li>🏰 保护你的基地</li>
+                        <li>🧱 利用墙体作为掩护</li>
+                        <li>⭐ 击败敌人获得分数</li>
+                        <li>🚀 完成关卡进入下一关</li>
+                    </ul>
+                </div>
+
+                <div class="info-panel">
+                    <h3 class="panel-title">图例</h3>
+                    <div class="legend-grid">
+                        <div class="legend-item">
+                            <div class="legend-icon player-icon"></div>
+                            <span>玩家</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon enemy-icon"></div>
+                            <span>敌人</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon brick-icon"></div>
+                            <span>砖墙</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon steel-icon"></div>
+                            <span>钢墙</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon base-icon"></div>
+                            <span>基地</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- 游戏脚本 -->
+    <script src="utils.js"></script>
+    <script src="collision.js"></script>
+    <script src="effects.js"></script>
+    <script src="bullet.js"></script>
+    <script src="tank.js"></script>
+    <script src="map.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
